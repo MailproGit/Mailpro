@@ -1,39 +1,45 @@
 const fetch = require('node-fetch');
 
 class MailproClient {
-  constructor({ baseUrl = 'https://api.mailpro.com', token }) {
-    this.baseUrl = baseUrl.replace(/\/$/, '');
-    this.token = token; // OAuth2 bearer token or API token depending on your setup
+  constructor(apiKey) {
+    this.apiKey = apiKey;
+    this.baseUrl = 'https://api.mailpro.com/v3';
   }
 
-  async request(path, method = 'GET', body = null, qs = null) {
-    const url = new URL(this.baseUrl + path);
-    if (qs) Object.keys(qs).forEach(k => url.searchParams.append(k, qs[k]));
-    const opts = {
+  async request(endpoint, method = 'GET', body = null) {
+    const res = await fetch(`${this.baseUrl}${endpoint}`, {
       method,
       headers: {
-        'Accept': 'application/json',
-        'Authorization': `Bearer ${this.token}`
-      }
-    };
-    if (body) {
-      opts.headers['Content-Type'] = 'application/json';
-      opts.body = JSON.stringify(body);
+        'Authorization': `Bearer ${this.apiKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: body ? JSON.stringify(body) : null
+    });
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error(`Mailpro API error: ${res.status} ${errText}`);
     }
-    const res = await fetch(url.toString(), opts);
-    const txt = await res.text();
-    try { return JSON.parse(txt); } catch (e) { return txt; }
+    return res.json();
   }
 
-  // Example: send a single transactional email
-  async sendEmail(fromId, to, subject, html) {
-    const body = {
-      idFrom: fromId,
-      to: to,
-      subject: subject,
-      bodyHtml: html
-    };
-    return this.request('/v3/email/send', 'POST', body);
+  sendEmail(payload) {
+    return this.request('/emails', 'POST', payload);
+  }
+
+  getContacts() {
+    return this.request('/contacts', 'GET');
+  }
+
+  createContact(payload) {
+    return this.request('/contacts', 'POST', payload);
+  }
+
+  createCampaign(payload) {
+    return this.request('/campaigns', 'POST', payload);
+  }
+
+  getCampaign(id) {
+    return this.request(`/campaigns/${id}`, 'GET');
   }
 }
 
