@@ -1,16 +1,19 @@
 const MailproClient = require('./mailproClient');
 
 (async () => {
-  const client = new MailproClient({ token: process.env.MAILPRO_TOKEN });
   try {
-    const resp = await client.sendEmail(
-      12345, // idFrom (replace with a real sender id from your Mailpro account)
-      [{ email: 'recipient@example.com', name: 'Recipient' }],
-      'Test from Mailpro SDK Starter',
-      '<h1>Hello from Mailpro</h1><p>This is a test.</p>'
-    );
-    console.log('API response:', resp);
+    const client = new MailproClient('YOUR_API_KEY');
+
+    const emailPayload = {
+      from: 'you@example.com',
+      to: 'recipient@example.com',
+      subject: 'Hello from Mailpro API',
+      html: '<p>This is a test email sent via the Mailpro API SDK!</p>'
+    };
+
+    const result = await client.sendEmail(emailPayload);
+    console.log('Email sent successfully:', result);
   } catch (err) {
-    console.error('Error:', err);
+    console.error('Error sending email:', err.message);
   }
 })();
