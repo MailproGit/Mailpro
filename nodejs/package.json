@@ -1,1 +1,7 @@
-
+{
+  "name": "mailpro-sdk-starter",
+  "version": "0.1.0",
+  "main": "src/send_email_example.js",
+  "scripts": { "start": "node src/send_email_example.js" },
+  "dependencies": { "node-fetch": "^2.6.12" }
+}
