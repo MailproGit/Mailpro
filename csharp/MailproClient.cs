@@ -1,30 +1,32 @@
 using System;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
 public class MailproClient
 {
-    private readonly HttpClient _http;
-    public MailproClient(string token, string baseUrl = "https://api.mailpro.com")
+    private readonly string _apiKey;
+    private readonly HttpClient _httpClient;
+
+    public MailproClient(string apiKey)
     {
-        _http = new HttpClient { BaseAddress = new Uri(baseUrl) };
-        _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-        _http.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        _apiKey = apiKey;
+        _httpClient = new HttpClient();
+        _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_apiKey}");
     }
 
-    public async Task<string> SendEmailAsync(long idFrom, object to, string subject, string html)
+    public async Task<string> GetAsync(string endpoint)
     {
-        var payload = new {
-            idFrom = idFrom,
-            to = to,
-            subject = subject,
-            bodyHtml = html
-        };
-        var json = System.Text.Json.JsonSerializer.Serialize(payload);
-        var res = await _http.PostAsync("/v3/email/send", new StringContent(json, Encoding.UTF8, "application/json"));
-        res.EnsureSuccessStatusCode();
-        return await res.Content.ReadAsStringAsync();
+        var response = await _httpClient.GetAsync(endpoint);
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadAsStringAsync();
+    }
+
+    public async Task<string> PostAsync(string endpoint, string jsonBody)
+    {
+        var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+        var response = await _httpClient.PostAsync(endpoint, content);
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadAsStringAsync();
     }
 }
