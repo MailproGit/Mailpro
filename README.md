@@ -12,3 +12,6 @@ The examples assume a POST /v3/email/send endpoint. Check the official doc for t
 Expand this starter into a full SDK: add contact/list management, campaign creation, stats retrieval, error wrappers, retries, and unit tests.
 
 This SDK is released under the MIT License. You are free to use it in personal, commercial, and educational projects, with or without modification.
+
+
+![Project Logo](https://login.mailpro.com/Content/images/mailpro-logo.svg)
