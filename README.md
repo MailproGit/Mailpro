@@ -1,8 +1,8 @@
 # Mailpro API SDK Starter
 Refer to the included examples in Node.js, Python, and C#.
 
-More info on https://api.mailpro.com/doc
-Also visit https://www.mailpro.com
+More info and all function in https://api.mailpro.com/doc with Swagger.
+Also visit our website for global Email and SMS Marketing Tools : https://www.mailpro.com
 
 
 Notes & next steps
